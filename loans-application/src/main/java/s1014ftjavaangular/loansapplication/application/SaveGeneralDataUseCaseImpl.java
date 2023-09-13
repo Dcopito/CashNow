@@ -3,7 +3,6 @@ package s1014ftjavaangular.loansapplication.application;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import s1014ftjavaangular.loansapplication.domain.mapper.GeneralDataMapper;
 import s1014ftjavaangular.loansapplication.domain.mapper.LoanApplicationMapper;
 import s1014ftjavaangular.loansapplication.domain.model.dto.request.GeneralDataDto;
@@ -12,6 +11,7 @@ import s1014ftjavaangular.loansapplication.domain.repository.LoanApplicationRepo
 import s1014ftjavaangular.loansapplication.domain.usecase.SaveGeneralDataUseCase;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -22,12 +22,13 @@ public class SaveGeneralDataUseCaseImpl implements SaveGeneralDataUseCase {
     private final GeneralDataMapper generalDataMapper;
     private final LoanApplicationMapper loanApplicationMapper;
 
-//
+    //
     @Override
     public String saveGeneralData(GeneralDataDto request) {
 
-        var countIncompleteOrAuditingLoanApplication = loanApplicationRepository.countOfInactiveOrAuditingLoanApplicatin(request.getIdentification());
-        if(countIncompleteOrAuditingLoanApplication == 1){
+        var countIncompleteOrAuditingLoanApplication = loanApplicationRepository.countOfInactiveOrAuditingLoanApplication(request.getIdentification(), request.getCustomersUuid());
+
+        if (countIncompleteOrAuditingLoanApplication == 1) {
             throw new RuntimeException("Cannot create new request because you already have one in 'AUDITING' or 'INCOMPLETE' status");
         }
 
@@ -47,19 +48,11 @@ public class SaveGeneralDataUseCaseImpl implements SaveGeneralDataUseCase {
     }
 
     private String getNextLoanApplicationNumber(String lastLoanApplicationNumber) {
-        if (!StringUtils.hasText(lastLoanApplicationNumber)) {
-            return "1";
-        } else {
-            int separatorIndex = lastLoanApplicationNumber.indexOf("-");
-
-            if (separatorIndex != -1 && separatorIndex + 1 < lastLoanApplicationNumber.length()) {
-                String numeration = lastLoanApplicationNumber.substring(separatorIndex + 1);
-                int number = Integer.parseInt(numeration.trim());
-                number++;
-                return String.valueOf(number);
-            } else {
-                return "1";
-            }
-        }
+        return Optional.ofNullable( lastLoanApplicationNumber )
+                .filter(lastNumber-> lastNumber.indexOf("-") == 4 && lastNumber.split("-").length == 2)
+                .flatMap(lastNumber-> Optional.of( Integer.valueOf( lastNumber.split("-")[1] ) ))
+                .flatMap(number-> Optional.of( String.valueOf( ++number ) ) )
+                .orElse("1");
     }
+
 }

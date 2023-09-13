@@ -9,14 +9,19 @@ import java.util.List;
 public interface LoanApplicationRepository {
 
     void updateLoanApplicationStatus(final String id, Status status);
+
     void updateLoanApplication(final Double requestAmount, final String id);
 
     List<LoanApplicationForCustomer> findByCustomerId(final String customerId);
+
     LoanApplication findById(final String id);
+
     void saveLoanApplication(final LoanApplication model);
 
     String findLastLoanApplicationNumber();
 
-    Integer countOfInactiveOrAuditingLoanApplicatin(final String identification);
+    Integer countOfInactiveOrAuditingLoanApplication(final String identification, final String customerId);
+
+    void loanApplicationOnReview(String id);
 
 }

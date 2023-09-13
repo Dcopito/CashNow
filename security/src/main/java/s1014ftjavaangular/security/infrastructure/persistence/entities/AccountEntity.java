@@ -30,10 +30,13 @@ public class AccountEntity implements Serializable {
     private LocalDate createdAt;
     @Column(name = "lastSession", nullable = false)
     private LocalDate lastSession;
+
     @Column(name = "active", nullable = false)
     private Boolean active;
+
     @Column(name = "rol", nullable = false)
     private Rol rol;
+
     @Transient
     private String token;
 
