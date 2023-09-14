@@ -1,4 +1,5 @@
 <h6 align="center">Seleccionado 10 - Equipo 14 - Java - Angular</h1>
+
 Tecnologías utilizadas:
 
 - Java 17
