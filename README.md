@@ -1,5 +1,5 @@
 <h6 align="center">Seleccionado 10 - Equipo 14 - Java - Angular</h1>
-## Tecnologías utilizadas:
+Tecnologías utilizadas:
 
 - Java 17
 - Spring Boot 3.0.1
